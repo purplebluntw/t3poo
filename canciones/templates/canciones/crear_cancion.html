@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nueva Canción</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .back-button {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+        .back-button:hover {
+            color: #0056b3;
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        /* Nuevo estilo para el footer */
+        .footer {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+        }
+        .footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </div>
+
+    <div class="container">
+        <h1>Agregar Nueva Canción</h1>
+        <form action="{% url 'canciones:crear_cancion' name=name %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" name="titulo" required maxlength="100">
+                <span id="titulo-contador" style="font-size: 0.8em; color: #666;">0/100 caracteres</span>
+            </div>
+            <div class="form-group">
+                <label for="artista">Artista:</label>
+                <input type="text" id="artista" name="artista" maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="album">Álbum:</label>
+                <input type="text" id="album" name="album" maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="ano_lanzamiento">Año de Lanzamiento:</label>
+                <input type="number" id="ano_lanzamiento" name="ano_lanzamiento" min="1900" max="{{ current_year }}">
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="es_favorita" name="es_favorita">
+                <label for="es_favorita">Marcar como favorita globalmente</label>
+            </div>
+            <button type="submit">Agregar Canción</button>
+        </form>
+        <a href="{% url 'canciones:lista_canciones' name=name %}" class="back-button">Volver a la Lista</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tituloInput = document.getElementById('titulo');
+            const tituloContador = document.getElementById('titulo-contador');
+            const maxLength = tituloInput.maxLength;
+
+            function actualizarContador() {
+                const currentLength = tituloInput.value.length;
+                tituloContador.textContent = `${currentLength}/${maxLength} caracteres`;
+                if (currentLength > maxLength) {
+                    tituloContador.style.color = 'red';
+                } else {
+                    tituloContador.style.color = '#666';
+                }
+            }
+
+            actualizarContador();
+            tituloInput.addEventListener('input', actualizarContador);
+        });
+    </script>
+    <footer class="footer">
+        <p>Creado por PurpleBlunt y Lilo - Lenguaje de Programación OO II</p>
+    </footer>
+</body>
+</html>

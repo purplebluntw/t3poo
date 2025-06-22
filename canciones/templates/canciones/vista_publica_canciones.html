@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canciones Favoritas Públicas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        h1 {
+            color: #333;
+            margin: 0;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .login-button, .register-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .login-button:hover, .register-button:hover {
+            background-color: #0056b3;
+        }
+        .song-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            max-width: 800px;
+        }
+        .song-item {
+            background-color: #fff;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #28a745; /* Un color diferente para públicas */
+        }
+        .song-details {
+            flex-grow: 1;
+            text-align: left;
+            margin-right: 15px;
+        }
+        .song-details h2 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1.4em;
+        }
+        .song-details p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .view-details-button {
+            background-color: #17a2b8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+        .view-details-button:hover {
+            background-color: #138496;
+        }
+        /* Nuevo estilo para el footer */
+        .footer {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+        }
+        .footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Canciones Favoritas Públicas</h1>
+        <div class="actions">
+            {% if is_authenticated %}
+                {# Si hay un usuario logueado, podríamos mostrar un enlace a su propia lista o logout #}
+                {# Por simplicidad, aquí solo se muestra el login/register si no está logueado #}
+            {% else %}
+                <a href="{% url 'login' %}" class="login-button">Iniciar Sesión</a>
+                <a href="{% url 'register' %}" class="register-button">Registrarse</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <ul class="song-list">
+        {% if canciones %}
+            {% for cancion in canciones %}
+                <li class="song-item">
+                    <div class="song-details">
+                        <h2>{{ cancion.titulo }}</h2>
+                        <p><strong>Artista:</strong> {{ cancion.artista|default:"Desconocido" }}</p>
+                        <p><strong>Álbum:</strong> {{ cancion.album|default:"N/A" }}</p>
+                        <p><strong>Año:</strong> {{ cancion.ano_lanzamiento|default:"N/A" }}</p>
+                    </div>
+                    <a href="{% url 'canciones:detalle_cancion_publico' cancion.id %}" class="view-details-button">Ver Detalles</a>
+                </li>
+            {% endfor %}
+        {% else %}
+            <p>No hay canciones marcadas como favoritas públicas aún.</p>
+        {% endif %}
+    </ul>
+
+    <footer class="footer">
+        <p>Creado por PurpleBlunt y Lilo - Lenguaje de Programación OO II</p>
+    </footer>
+</body>
+</html>
