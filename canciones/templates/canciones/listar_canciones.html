@@ -64,6 +64,23 @@
         .logout-button:hover {
             background-color: #c82333;
         }
+        /* Nuevo estilo para el botón de Ver Canciones Públicas */
+        .public-songs-button {
+            background-color: #007bff; /* Color azul */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .public-songs-button:hover {
+            background-color: #0056b3; /* Tono más oscuro de azul */
+        }
+
+
         .messages {
             list-style: none;
             padding: 0;
@@ -199,6 +216,7 @@
         <h1 class="welcome-message">¡Hola, {{ name }}! Tus Canciones Favoritas</h1>
         <div class="actions">
             <a href="{% url 'canciones:crear_cancion' name=name %}" class="add-button">Agregar Nueva Canción</a>
+            <a href="{% url 'canciones:vista_publica_canciones' %}" class="public-songs-button">Ver Canciones Públicas</a> {# Nuevo botón #}
             <a href="{% url 'logout' %}" class="logout-button">Cerrar Sesión</a>
         </div>
     </div>
@@ -214,7 +232,7 @@
                         <p><strong>Año:</strong> {{ cancion.ano_lanzamiento|default:"N/A" }}</p>
                         <p><strong>Agregada el:</strong> {{ cancion.fecha_agregada|date:"d M, Y" }}</p>
                         {% if cancion.es_favorita %}
-                            <p class="favorite">★ Favorita</p>
+                            <p class="favorite">★ Marcada como pública</p>
                         {% endif %}
                     </div>
                     <div class="item-actions">

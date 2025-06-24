@@ -142,7 +142,9 @@ def crear_cancion(request, name):
         artista = request.POST.get('artista')
         album = request.POST.get('album')
         ano_lanzamiento_str = request.POST.get('ano_lanzamiento')
-        es_favorita_global = 'es_favorita' in request.POST # True si el checkbox está marcado
+        # Determina si el checkbox 'es_favorita' fue marcado.
+        # Esto se usará para el campo 'es_favorita' de la tabla global 'Cancion'.
+        es_favorita_global = 'es_favorita' in request.POST 
 
         # --- VALIDACIONES PARA LA CREACIÓN DE CANCIONES ---
         if not titulo or not titulo.strip():
@@ -157,13 +159,12 @@ def crear_cancion(request, name):
                     'artista': artista,
                     'album': album,
                     'ano_lanzamiento': ano_lanzamiento_str,
-                    'es_favorita': es_favorita_global
+                    'es_favorita': es_favorita_global # Pasa el estado del checkbox
                 }
             }
             return render(request, "canciones/crear_cancion.html", context)
 
-        # Verifica si el usuario ya tiene una canción con este título
-        # (se busca por el título porque es el campo principal que el usuario ingresa)
+        # Verifica si el usuario ya tiene una canción con este título en su lista
         if UsuarioCancion.objects.filter(usuario=user, cancion__titulo=titulo).exists():
             messages.error(request, f"Ya tienes una canción llamada '{titulo}' en tus favoritos.")
             context = { # Se mantienen los datos para rellenar el formulario si hay un error
@@ -217,30 +218,29 @@ def crear_cancion(request, name):
             return render(request, "canciones/crear_cancion.html", context)
         # --- FIN DE VALIDACIONES ---
 
-        # Si todas las validaciones pasan, crea o actualiza la Cancion
-        # Primero, intenta encontrar una canción existente para el mismo artista y título
-        # para evitar duplicados en la tabla Cancion si no es realmente una nueva canción
+        # Si todas las validaciones pasan, crea o actualiza la Cancion en la tabla global
+        # Se usa get_or_create para evitar duplicados en la tabla `Cancion` (global)
         cancion, created = Cancion.objects.get_or_create(
             titulo=titulo,
             artista=artista if artista else '', # Usar cadena vacía para get_or_create si es nulo
             album=album if album else '',
             defaults={
                 'ano_lanzamiento': ano_lanzamiento,
-                'es_favorita': es_favorita_global,
+                'es_favorita': es_favorita_global, # Aquí se asigna el valor del checkbox
                 'fecha_agregada': date.today()
             }
         )
-        if not created: # Si la canción ya existía, actualiza sus campos si es necesario
+        # Si la canción ya existía, actualiza sus campos (incluyendo es_favorita)
+        if not created: 
             cancion.ano_lanzamiento = ano_lanzamiento
-            cancion.es_favorita = es_favorita_global
+            cancion.es_favorita = es_favorita_global # Asegura que se actualice si ya existe
             cancion.save()
 
         # Luego, crea la relación UsuarioCancion si no existe
-        # (Esto evita que un usuario agregue la misma canción dos veces a su lista de favoritos)
         try:
             UsuarioCancion.objects.create(usuario=user, cancion=cancion, clave_relacion=uuid.uuid4())
             messages.success(request, f"Canción '{cancion.titulo}' agregada a tus favoritos.")
-        except Exception: # Si ya existe la relación (debería ser evitado por la validación de arriba, pero como fallback)
+        except Exception: 
             messages.info(request, f"La canción '{cancion.titulo}' ya estaba en tus favoritos.")
 
         return redirect('canciones:lista_canciones', name=name)
@@ -275,11 +275,12 @@ def editar_cancion(request, name, id):
         nuevo_artista = request.POST.get('artista')
         nuevo_album = request.POST.get('album')
         nuevo_ano_lanzamiento_str = request.POST.get('ano_lanzamiento')
-        nueva_es_favorita_global = 'es_favorita' in request.POST
+        nueva_es_favorita_global = 'es_favorita' in request.POST # Obtiene el estado del checkbox
 
         # --- VALIDACIONES PARA LA EDICIÓN DE CANCIONES ---
         if not nuevo_titulo or not nuevo_titulo.strip():
             messages.error(request, "El título de la canción no puede estar vacío.")
+            # Asegúrate de pasar la canción con los datos actuales para rellenar el formulario
             context = {"cancion": cancion, "name": name, "is_authenticated": True, "current_year": date.today().year}
             return render(request, "canciones/editar_cancion.html", context)
         
@@ -305,12 +306,12 @@ def editar_cancion(request, name, id):
             return render(request, "canciones/editar_cancion.html", context)
         # --- FIN DE VALIDACIONES ---
 
-        # Asigna los nuevos valores y guarda la canción
+        # Asigna los nuevos valores y guarda la canción en la tabla global `Cancion`
         cancion.titulo = nuevo_titulo
         cancion.artista = nuevo_artista
         cancion.album = nuevo_album
         cancion.ano_lanzamiento = nuevo_ano_lanzamiento
-        cancion.es_favorita = nueva_es_favorita_global
+        cancion.es_favorita = nueva_es_favorita_global # Aquí se asigna el valor del checkbox
         cancion.save()
 
         messages.success(request, f"Canción '{cancion.titulo}' actualizada exitosamente.")

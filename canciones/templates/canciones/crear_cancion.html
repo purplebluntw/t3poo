@@ -139,24 +139,24 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" required maxlength="100">
+                <input type="text" id="titulo" name="titulo" value="{{ cancion.titulo|default:'' }}" required maxlength="100">
                 <span id="titulo-contador" style="font-size: 0.8em; color: #666;">0/100 caracteres</span>
             </div>
             <div class="form-group">
                 <label for="artista">Artista:</label>
-                <input type="text" id="artista" name="artista" maxlength="100">
+                <input type="text" id="artista" name="artista" value="{{ cancion.artista|default:'' }}" maxlength="100">
             </div>
             <div class="form-group">
                 <label for="album">Álbum:</label>
-                <input type="text" id="album" name="album" maxlength="100">
+                <input type="text" id="album" name="album" value="{{ cancion.album|default:'' }}" maxlength="100">
             </div>
             <div class="form-group">
                 <label for="ano_lanzamiento">Año de Lanzamiento:</label>
-                <input type="number" id="ano_lanzamiento" name="ano_lanzamiento" min="1900" max="{{ current_year }}">
+                <input type="number" id="ano_lanzamiento" name="ano_lanzamiento" min="1900" max="{{ current_year }}" value="{{ cancion.ano_lanzamiento|default:'' }}">
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="es_favorita" name="es_favorita">
-                <label for="es_favorita">Marcar como favorita globalmente</label>
+                <input type="checkbox" id="es_favorita" name="es_favorita" {% if cancion.es_favorita %}checked{% endif %}>
+                <label for="es_favorita">Marcar como favorita globalmente (visible para todos)</label>
             </div>
             <button type="submit">Agregar Canción</button>
         </form>

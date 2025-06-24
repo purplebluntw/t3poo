@@ -113,8 +113,9 @@
         <h1>Canciones Favoritas Públicas</h1>
         <div class="actions">
             {% if is_authenticated %}
-                {# Si hay un usuario logueado, podríamos mostrar un enlace a su propia lista o logout #}
-                {# Por simplicidad, aquí solo se muestra el login/register si no está logueado #}
+                {# Si hay un usuario logueado, se podría añadir un enlace a su lista privada o logout #}
+                <a href="{% url 'canciones:lista_canciones' name=request.session.nombre_usuario %}" class="login-button">Mis Canciones</a>
+                <a href="{% url 'logout' %}" class="register-button" style="background-color: #dc3545;">Cerrar Sesión</a>
             {% else %}
                 <a href="{% url 'login' %}" class="login-button">Iniciar Sesión</a>
                 <a href="{% url 'register' %}" class="register-button">Registrarse</a>

@@ -63,14 +63,14 @@
         button:hover {
             background-color: #218838;
         }
-        .login-link {
+        .login-link, .public-link { /* Añadido .public-link */
             display: block;
             margin-top: 15px;
             color: #007bff;
             text-decoration: none;
             font-size: 0.9em;
         }
-        .login-link:hover {
+        .login-link:hover, .public-link:hover { /* Añadido .public-link */
             text-decoration: underline;
         }
         .messages {
@@ -137,6 +137,7 @@
             <button type="submit">Registrar</button>
         </form>
         <a href="{% url 'login' %}" class="login-link">¿Ya tienes cuenta? Inicia sesión aquí</a>
+        <a href="{% url 'canciones:vista_publica_canciones' %}" class="public-link">Ver Canciones Públicas</a> {# Nuevo botón #}
     </div>
 
     <footer class="footer">
